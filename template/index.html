@@ -1,0 +1,474 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Restaurant Analysis</title>
+        <!-- Bootstrap CDN -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" ></script>
+
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous" ></script>
+
+        <!-- Select2 CDN -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.min.js"></script>
+
+        <!-- Our Custom CSS -->
+        <style>
+            .container {
+                display: flex;
+                height: 100vh;
+                justify-content: center;
+                align-items: center;
+            }
+            .card {
+                width: 60%;
+            }
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+            }
+            .svgs {
+                position: fixed;
+            }
+            .page {
+                width: 100%;
+                height: 100vh;
+                position: relative;
+            }
+
+            .scrollIndicator{
+                position: absolute;
+                bottom: 12px;
+                height: 0;
+                width: 0;
+                border-left:  25px solid transparent;
+                border-right: 25px solid transparent;
+                border-top:   25px solid #f00;
+                animation: down 1.5s ease-in-out infinite;
+            }
+            @keyframes down{
+                0%{ transform: translateY(0);}
+                50%{ transform: translateY(100%);}
+                100%{ transform: translateY(0);}
+            }
+
+            #part1 {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+            }
+            #part1 .title {
+                font-size: 3em;
+                font-weight: bold;
+                letter-spacing: 2px;
+            }
+            #part1 .title-support {
+                font-size: 1.4em;
+            }
+            #part1 .imgContainer {
+                margin-top: 10em;
+                width: 40em;
+                height: 40em;
+                background-color: #fff;
+            }
+            #part1 .imgContainer img {
+                width: 100%;
+            }
+            #part1 .info{
+                margin-left: 5em;
+            }
+            #part1 .info .dev {
+                margin-top: 4em;
+                margin-bottom: 4em;
+                font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+            }
+            #part1 .info .btn-grp .try {
+                display: inline-block;
+                text-decoration: none;
+                color: white;
+                font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+                    sans-serif;
+                font-weight: bold;
+                padding: 0.6em 2em;
+                margin-right: 2em;
+                font-size: 1.4em;
+                border: none;
+                border-radius: 40px;
+                /* background-image: linear-gradient(to right, #009FFF, #ec2F4B); */
+                /* background-image: linear-gradient(to right, #00F260, #0575E6); */
+                background-image: linear-gradient(to right, #2F80ED, #56CCF2);
+                /* background-image: linear-gradient(to right, #00c3ff, #ffff1c); */
+                box-shadow: 4px 4px 10px #81ecec;
+                transition: 0.3s;
+            }
+            #part1 .info .btn-grp .try:hover {
+                cursor: pointer;
+                transform: scale(1.05);
+            }
+            #part1 .info .btn-grp .more {
+                font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+                    sans-serif;
+                padding: 0.6em 2em;
+                font-size: 1.2em;
+                border: 1px solid gray;
+                background-color: transparent;
+                border-radius: 40px;
+                transition: 0.3s;
+            }
+            #part1 .info .btn-grp .more:hover {
+                cursor: pointer;
+                transform: scale(1.05);
+            }
+
+            #part2 {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+            .text-blue {
+                color: #5e72e4;
+            }
+            .text-green {
+                color: #2dce89;
+            }
+            .text-orange {
+                color: #fb6340;
+            }
+            #part2 .myCard {
+                display: flex;
+                flex-direction: column;
+                border-radius: 10px;
+                width: 20em;
+                margin: 3em;
+                min-height: 18em;
+                padding: 1em;
+                border: none;
+                filter: drop-shadow(4px 4px 15px rgba(0, 0, 0, 0.15));
+                transition: 0.25s;
+            }
+            #part2 .myCard:hover {
+                transform: translateY(-10%);
+            }
+            #part2 .myCard .myCard-img {
+                display: flex;
+                width: 4em;
+            }
+            #part2 .myCard .myCard-img img {
+                margin-right: 2em;
+                width: 100%;
+            }
+            #part2 .myCard .myCard-title {
+                font-size: 1.5em;
+                font-weight: bold;
+                margin-top: 0.8em;
+                margin-bottom: 0.8em;
+            }
+            #part2 .myCard .myCard-body {
+                opacity: 0.75;
+            }
+
+            #part3 {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+            }
+            #part3 .imgContainer {
+                width: 30em;
+            }
+            #part3 .imgContainer img {
+                width: 100%;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="svgs">
+            <!-- <img src="bg_svg.svg" alt=""> -->
+            <img src="{% static 'bg_svg.svg' %}" alt="">
+        </div>
+        <div class="page" id="part1">
+            <div class="info">
+                <div class="title text-primary">Restaurant Analysis</div>
+                <div class="title-support">using Machine Learning</div>
+                <div class="dev">
+                    <div class="text-primary">
+                        <i class="far fa-file-code"></i>&nbsp;
+                        Developed by
+                    </div>
+                    <ul>
+                        <li>Vaibhav Saini</li>
+                        <li>Sachin Sahil</li>
+                        <li>Varun Agarwal</li>
+                        <li>Swastik Patro</li>
+                    </ul>
+                </div>
+                <div class="btn-grp">
+                    <a href="#predictor" class="try">
+                        Try now
+                    </a>
+                </div>
+            </div>
+            <div class="imgContainer">
+                <!-- <img src="restaurant2.svg" alt=""> -->
+                <img src="{% static 'img/restaurant2.svg' %}" alt="">
+            </div>
+            <div class="scrollIndicator"></div>
+        </div>
+        <div class="page" id="part2">
+            <div class="card myCard">
+                <div class="myCard-img">
+                    <!-- <img src="input.svg" alt=""> -->
+                    <img src="{% static 'img/input.svg' %}" alt="">
+                </div>
+                <div class="myCard-title text-blue">Enter details</div>
+                <div class="myCard-body ">Enter information about the restaurant to be opened, like its cuisines, timings, highlights, location etc. </div>
+            </div>
+            <div class="card myCard">
+                <div class="myCard-img">
+                    <!-- <img src="price.svg" alt="">
+                    <img src="rating.svg" alt=""> -->
+                    <img src="{% static 'img/price.svg' %}" alt="">
+                    <img src="{% static 'img/rating.svg' %}" alt="">
+                </div>
+                <div class="myCard-title text-green">Choose target</div>
+                <div class="myCard-body ">Select whether to predict the average cost per person you should keep for desired rating, or predict the rating you should keep for desires cost</div>
+            </div>
+            <div class="card myCard">
+                <div class="myCard-img">
+                    <!-- <img src="model.svg" alt=""> -->
+                    <img src="{% static 'model.svg' %}" alt="">
+                </div>
+                <div class="myCard-title text-orange">Prediction</div>
+                <div class="myCard-body ">A Deep neural network, trained on the data of over 220,000 restaurans across India, is used to predict the desired cost/rating</div>
+            </div>
+            <div class="scrollIndicator"></div>
+        </div>
+        <div class="page" id="part3">
+            <div class="imgContainer">
+                <!-- <img src="chef.svg" alt=""> -->
+                <img src="{% static 'chef.svg' %}" alt="">
+            </div>
+            <div id="predictor" class="card shadow">
+                <div class="card-header text-center text-primary">
+                    <h1>
+                        Restaurant Analyser
+                    </h1>
+                </div>
+                <div class="card-body p-3">
+                    <form action="" class="" method="POST">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <strong>
+                                    <label for="est">Establishment:</label>
+                                </strong>
+                                <select name="est" id="est" class="form-control" required> </select>
+                            </div>
+                            <div class="form-group col-6">
+                                <strong>
+                                    <label for="locality">Locality:</label>
+                                </strong>
+                                <select name="locality" id="locality" class="form-control" required> </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <strong>
+                                <label for="cuisines">Cuisines:</label>
+                            </strong>
+                            <select
+                                class="form-control cuisines-multiple"
+                                id="cuisines"
+                                name="cuisines[]"
+                                multiple="multiple"
+                                required
+                            >
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            
+                            <div class="col-6">
+                                <strong>
+                                    Operating Time
+                                </strong>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            
+                            <div class="form-group col-4">
+                                <label for="fromtime">From:</label>
+                                <input type="time" name="fromtime" id="fromtime" class="form-control" required />
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="totime">To:</label>
+                                <input type="time" name="totime" id="totime" class="form-control" required />
+                            </div>
+                            <div class="form-group col-4 text-center">
+                                    <strong> <label for="delivery">Home Delivery?</label><br /> </strong>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input
+                                            type="radio"
+                                            id="customRadioInline1"
+                                            name="customRadioInline1"
+                                            class="custom-control-input"
+                                        />
+                                        <label class="custom-control-label" for="customRadioInline1">Yes</label>
+                                    </div>
+                                    <div class="custom-control custom-radio custom-control-inline">
+                                        <input
+                                            type="radio"
+                                            id="customRadioInline2"
+                                            name="customRadioInline1"
+                                            class="custom-control-input"
+                                        />
+                                        <label class="custom-control-label" for="customRadioInline2">No</label>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-12">
+                                <strong>
+                                    <label for="highlights">Highlights:</label>
+                                </strong>
+                                <select
+                                    class="form-control highlights-multiple"
+                                    id="highlights"
+                                    name="highlights[]"
+                                    multiple="multiple"
+                                    required
+                                >
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <strong>
+                                    <label for="cost">Cost per head</label>
+                                </strong>
+                                <input
+                                    type="number"
+                                    name="cost"
+                                    id="cost"
+                                    min="0"
+                                    max="30000"
+                                    step="25"
+                                    class="form-control"
+                                />
+                            </div>
+                            <div class="form-group col-6">
+                                <strong>
+                                    <label for="rating">Rating</label>
+                                </strong>
+                                <input
+                                    type="number"
+                                    name="rating"
+                                    id="rating"
+                                    min="1"
+                                    max="5"
+                                    step="0.1"
+                                    class="form-control"
+                                />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-primary mx-auto" id="submitBtn" value="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    {% block result %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        $(document).ready(function() {
+            $(".cuisines-multiple").select2();
+            $(".highlights-multiple").select2();
+
+            function load_data(){
+                // Load establishments
+                var est_opts = "";
+                $.get("{% static 'text/establishment.txt' %}", (data, success) => {
+                    arr = data.split(",");
+                    est_opts += '<option value="" disabled hidden selected>Select Establishment</option>';
+                    arr.forEach(element => {
+                        if (element)
+                            est_opts += '<option value="' + element + '">' + element + "</option>";
+                    });
+                    $("#est").html(est_opts);
+                });
+                // Load locality
+                var loc_opts = "";
+                $.get("{% static 'text/locality.txt' %}", (data, success) => {
+                    arr = data.split(";");
+                    loc_opts += '<option value="" disabled hidden selected>Select Locality</option>';
+                    arr.forEach(element => {
+                        loc_opts += '<option value="' + element + '">' + element + "</option>";
+                    });
+                    $("#locality").html(loc_opts);
+                });
+                // Load cuisines
+                var cuisines_opts = "";
+                $.get("{% static 'text/cuisines.txt' %}", (data, success) => {
+                    arr = data.split(",");
+                    cuisines_opts += '<option value="" disabled hidden>Select Cuisine</option>';
+                    arr.forEach(element => {
+                        cuisines_opts += '<option value="' + element + '">' + element + "</option>";
+                    });
+                    $("#cuisines").html(cuisines_opts);
+                });
+                // Load highlights
+                var high_opts = "";
+                $.get("{% static 'text/highlights.txt' %}", (data, success) => {
+                    arr = data.split(",");
+                    high_opts += '<option value="" disabled hidden>Select Highlights</option>';
+                    arr.forEach(element => {
+                        if(element)
+                            high_opts += '<option value="' + element + '">' + element + "</option>";
+                    });
+                    $("#highlights").html(high_opts);
+                });
+            }
+            load_data();
+            
+            $("#rating").click(() => {
+                $("#cost").val('');
+                $("#submitBtn").html("Predict Cost");
+            });
+            $("#rating").blur(() => {
+                var ele = $('#rating');
+                if(ele.val() > ele.attr('max'))
+                    ele.val(ele.attr('max'));
+                if(ele.val() < ele.attr('min'))
+                    ele.val(ele.attr('min'));
+            });
+
+            $("#cost").click(() => {
+                $("#rating").val('');
+                $("#submitBtn").html("Predict Rating");
+            });
+            $("#cost").blur(() => {
+                var ele = $('#cost');
+                if(ele.val() > ele.attr('max'))
+                    ele.val(ele.attr('max'));
+                if(ele.val() < ele.attr('min'))
+                    ele.val(ele.attr('min'));
+            });
+        });
+    </script>
+</html>
